@@ -1,0 +1,26 @@
+{
+  "name": "@octopod-service/web-getter",
+  "version": "1.0.1",
+  "description": "",
+  "main": "./lib/index.js",
+  "scripts": {
+    "build": "cd src && tsc",
+    "dev": "cd src && tsc -w",
+    "start": "node lib/index.js"
+  },
+  "author": "Adrien Castex <adrien.castex@protonmail.com>",
+  "license": "Unlicense",
+  "devDependencies": {
+    "@types/node": "^8.0.7",
+    "@types/request": "0.0.45"
+  },
+  "dependencies": {
+    "octopod": "^1.1.0",
+    "request": "^2.81.0",
+    "webdav-client": "^1.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OpenMarshal/octopod-repositories.git"
+  }
+}
