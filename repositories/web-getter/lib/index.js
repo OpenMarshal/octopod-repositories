@@ -120,3 +120,4 @@ var GetterService = (function (_super) {
     };
     return GetterService;
 }(octopod_1.Service));
+exports.GetterService = GetterService;

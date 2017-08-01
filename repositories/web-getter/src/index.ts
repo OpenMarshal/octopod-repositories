@@ -3,29 +3,29 @@ import * as request from 'request'
 import * as url from 'url'
 import * as path from 'path'
 
-interface GetterServiceRequest
+export interface GetterServiceRequest
 {
     url : string
 }
-interface GetterServiceResult
+export interface GetterServiceResult
 {
     filePath : string
 }
-interface GetterServiceDirectResult
+export interface GetterServiceDirectResult
 {
     body : string
 }
 
-interface HostnameAction
+export interface HostnameAction
 {
     (callback : (error : Error) => void) : void
 }
-interface HostnameDictionary
+export interface HostnameDictionary
 {
     [hostname : string] : HostnameAction[]
 }
 
-class GetterService extends Service
+export class GetterService extends Service
 {
     hostnames : HostnameDictionary = { };
 
