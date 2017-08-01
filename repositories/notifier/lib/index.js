@@ -17,37 +17,40 @@ var NotifierService = (function (_super) {
     __extends(NotifierService, _super);
     function NotifierService(coreUrl, options) {
         var _this = _super.call(this, 'notifier', coreUrl) || this;
-        _this.defaultOperations = [];
         if (!options)
             options = {
-                destinations: []
+                operations: []
             };
-        if (options.destinations)
-            _this.defaultOperations = options.destinations;
+        _this.operations = options.operations ? options.operations : [];
+        _this.types = options.types ? options.types : {};
+        if (_this.types['email'] === undefined) {
+            _this.types['email'] = function (type, data, callback) {
+                var _this = this;
+                var transporter = nodemailer.createTransport(directTransport(undefined));
+                var mailData = JSON.parse(JSON.stringify(type.settings));
+                mailData.subject = data.title;
+                mailData.html = data.body;
+                transporter.sendMail(mailData, function (e, info) {
+                    if (e) {
+                        _this.error('transporter.sendMail(...) : Error', e);
+                        setTimeout(function () { return _this.execDestination(type, data, callback); }, type.retryTimeout ? type.retryTimeout : 1000 * 60 * 10); // retry in 10 minutes
+                    }
+                    else {
+                        _this.log('Notified by email', mailData);
+                        callback();
+                    }
+                });
+            };
+        }
         return _this;
     }
     NotifierService.prototype.execDestination = function (type, data, callback) {
-        var _this = this;
-        switch (type.type) {
-            case 'email':
-                {
-                    var transporter = nodemailer.createTransport(directTransport(undefined));
-                    var mailData_1 = JSON.parse(JSON.stringify(type.settings));
-                    mailData_1.subject = data.title;
-                    mailData_1.html = data.body;
-                    transporter.sendMail(mailData_1, function (e, info) {
-                        if (e) {
-                            _this.error('transporter.sendMail(...) : Error', e);
-                            setTimeout(function () { return _this.execDestination(type, data, callback); }, type.retryTimeout ? type.retryTimeout : 1000 * 60 * 10); // retry in 10 minutes
-                        }
-                        else {
-                            _this.log('Notified by email', mailData_1);
-                            callback();
-                        }
-                    });
-                    break;
-                }
+        var exec = this.types[type.type];
+        if (!exec) {
+            this.error('Type not defined', JSON.stringify(type));
+            return callback();
         }
+        exec.bind(this)(type, data, callback);
     };
     NotifierService.prototype.start = function () {
         var _this = this;
@@ -64,7 +67,7 @@ var NotifierService = (function (_super) {
             if (e)
                 throw e;
             _this.bindMethod('notify', function (data, info) {
-                var operations = data.operations ? data.operations : _this.defaultOperations;
+                var operations = data.operations ? data.operations : _this.operations;
                 var nb = operations.length;
                 operations.forEach(function (dest) { return _this.execDestination(dest, data, function () {
                     if (--nb === 0)
