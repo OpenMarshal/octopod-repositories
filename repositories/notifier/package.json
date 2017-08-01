@@ -21,5 +21,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/OpenMarshal/octopod-repositories.git"
-  }
+  },
+  "types": "./lib/index.d.ts"
 }
