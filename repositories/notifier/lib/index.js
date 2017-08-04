@@ -28,8 +28,8 @@ var NotifierService = (function (_super) {
                 var _this = this;
                 var transporter = nodemailer.createTransport(directTransport(undefined));
                 var mailData = JSON.parse(JSON.stringify(type.settings));
-                mailData.subject = data.title;
-                mailData.html = data.body;
+                mailData.subject = data.title + ' (' + data.notify.node + ' - ' + data.notify.type + ')';
+                mailData.text = data.body;
                 transporter.sendMail(mailData, function (e, info) {
                     if (e) {
                         _this.error('transporter.sendMail(...) : Error', e);
@@ -68,11 +68,13 @@ var NotifierService = (function (_super) {
                 throw e;
             _this.bindMethod('notify', function (data, info) {
                 var operations = data.operations ? data.operations : _this.operations;
-                var nb = operations.length;
+                var nb = operations.length + 1;
                 operations.forEach(function (dest) { return _this.execDestination(dest, data, function () {
                     if (--nb === 0)
                         _this.dispose(info);
                 }); });
+                if (--nb === 0)
+                    _this.dispose(info);
             });
         });
     };

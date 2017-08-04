@@ -60,8 +60,8 @@ export class NotifierService extends Service
                 const transporter = nodemailer.createTransport(directTransport(undefined));
 
                 const mailData = JSON.parse(JSON.stringify(type.settings));
-                mailData.subject = data.title
-                mailData.html = data.body
+                mailData.subject = data.title + ' (' + data.notify.node + ' - ' + data.notify.type + ')'
+                mailData.text = data.body;
 
                 transporter.sendMail(mailData, (e, info) => {
                     if(e)
@@ -108,11 +108,13 @@ export class NotifierService extends Service
 
             this.bindMethod<Notification>('notify', (data, info) => {
                 const operations = data.operations ? data.operations : this.operations;
-                let nb = operations.length;
+                let nb = operations.length + 1;
                 operations.forEach((dest) => this.execDestination(dest, data, () => {
                     if(--nb === 0)
                         this.dispose(info);
                 }))
+                if(--nb === 0)
+                    this.dispose(info);
             })
         })
     }
