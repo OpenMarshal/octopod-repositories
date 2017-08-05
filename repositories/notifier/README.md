@@ -49,3 +49,16 @@ notifierService.types['write-file'] = function(type /* : DestinationType*/, data
 
 notifierService.start();
 ```
+
+## Call
+
+```javascript
+this.writeToService<Notification>('notifier', 'notify', {
+    title: 'title',
+    body: 'body\r\nbody.',
+    notify: {
+        node: this.uid,
+        type: this.options.username
+    }
+}, () => { });
+```
