@@ -1,6 +1,6 @@
 {
   "name": "@octopod-service/notifier",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "./lib/index.js",
   "scripts": {
